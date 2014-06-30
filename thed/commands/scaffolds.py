@@ -51,7 +51,10 @@ def all_scaffolds():
             scaffold_class = entry.load()
             scaffold = scaffold_class(entry.name)
             scaffolds.append(scaffold)
-        except Exception as e: # pragma: no cover
-            self.out('Warning: could not load entry point %s (%s: %s)' % (
-                entry.name, e.__class__.__name__, e))
+        except Exception as ex:  # pragma: no cover
+            click.echo(
+                'Warning: could not load entry point %s (%s: %s)' % (
+                    entry.name, ex.__class__.__name__, ex
+                )
+            )
     return scaffolds

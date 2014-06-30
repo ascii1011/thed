@@ -11,6 +11,7 @@ from .requests import Request
 from .resources import Resource, DBModelBackedResource, ModelBackedResource
 from .responses import Response
 
+
 class Application(object):
 
     @classmethod
