@@ -10,7 +10,7 @@ script:
 - coverage combine
 - coverage report
 - coverage xml
-- blumpkin coverage coverage.xml thed:90
+- blumpkin coverage coverage.xml thed.api:90
 after_success:
 - find thed -name "*.py" | xargs pep8 --ignore=E711 | tee pep8.out
 - PYPI_INDEX= PYPI_SERVER= blumpkin create-pypi

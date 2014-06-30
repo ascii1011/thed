@@ -13,8 +13,7 @@ class Resource(object):
         self.parent = parent
         self.request = request
         self.entity = entity
-        for key, value in kwargs.iteritems():
-            setattr(self, key, value)
+        self.attrs = kwargs
 
     @classmethod
     def nest(cls, key):
