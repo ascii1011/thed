@@ -8,11 +8,13 @@ logger = logging.getLogger(__name__)
 class Resource(object):
     endpoint_map = {}
 
-    def __init__(self, request, parent=None, name=None, entity=None):
-        self.__name__ = name
-        self.__parent__ = parent
+    def __init__(self, request, parent=None, name=None, entity=None, **kwargs):
+        self.__name__ = name or 'root'
+        self.parent = parent
         self.request = request
         self.entity = entity
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
     @classmethod
     def nest(cls, key):
@@ -37,14 +39,24 @@ class Resource(object):
             )
 
     def __getitem__(self, key):
-        import ipdb; ipdb.set_trace()
         ctx_cls = self._lookup_endpoint_from_map(key)
         return self._create_context_instance(ctx_cls, key)
+
+    def __repr__(self):
+        attributes = dict(
+            (key, value)
+            for key, value in self.__dict__.iteritems()
+            if key != '__name__' and value
+        )
+        return '<{name}({__name__}): {attributes}>'.format(
+            attributes=attributes,
+            name=self.__class__.__name__,
+            **self.__dict__
+        )
 
 
 class DBModelBackedResource(Resource):
     model_cls = None
-    ctx_cls = None
 
     def lookup(self, key):
         return self.model_cls.query.get(key).one()
@@ -53,7 +65,7 @@ class DBModelBackedResource(Resource):
         model = self.lookup(key)
         if not model:
             return super(DBModelBackedResource, self).__getitem__(key)
-        return self._create_context_instance(self.ctx_cls, key, entity=model)
+        return self._create_context_instance(type(self), key, entity=model)
 
 
 def includeme(config):

@@ -7,7 +7,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from .auth import AuthenticationPolicy
 from .controllers import Controller, RestController
 from .requests import Request
-from .resources import Resource
+from .resources import Resource, DBModelBackedResource
 from .responses import Response
 
 

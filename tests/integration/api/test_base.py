@@ -6,9 +6,16 @@ from tests.integration import IntegrationTestCase
 class APITestCase(IntegrationTestCase):
 
     def test_it(self):
-        self.app.get('/foo/bar/baz')
-        self.app.get('/foo/bar')
-        self.app.get('/foo')
-        self.app.get('/foo/dynamic')
+        for url, expected in (
+            ('/foo/bar/baz', 'baz.index'),
+            ('/foo/bar', 'bar.index'),
+            ('/foo', 'foo.index'),
+            ('/foo/bar/qux', 'qux.index'),
+            ('/foo/resource_id', '<TestModel>'),
+            ('/foo/resource_id/sub', 'sub.index'),
+            ('/foo/resource_id/sub/sub_id', '<SubModel><TestModel>')
+        ):
+            resp = self.app.get(url)
+            self.assertEqual(resp.text, expected)
 
 
