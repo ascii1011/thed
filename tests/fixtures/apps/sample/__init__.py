@@ -5,22 +5,6 @@ from pyramid.view import view_config
 from thed import api
 
 
-class ResourcePredicate(object):
-    """
-    """
-
-    def __init__(self, val, config):
-        self.val = val
-
-    def text(self):
-        return 'val=%s' % (self.val,)
-
-    phash = text
-
-    def __call__(self, context, request):
-        return context.entity and isinstance(context.entity, self.val)
-
-
 class TestModel(object):
 
     def __repr__(self):
@@ -34,11 +18,12 @@ class SubModel(object):
 
 
 @api.Resource.nest('foo')
-class FooResource(api.DBModelBackedResource):
+class FooResource(api.ModelBackedResource):
 
     model_cls = TestModel
 
     def lookup(self, key):
+        # in the real world this would be `self.model_cls.query.get(key).one()`
         if key == 'resource_id':
             return self.model_cls()
 
@@ -46,11 +31,9 @@ class FooResource(api.DBModelBackedResource):
 @api.RestController.register('foo', context=FooResource)
 class FooController(api.RestController):
 
-    @view_config(name='')
     def index(self):
         return api.Response('foo.index')
 
-    @view_config(resource=FooResource.model_cls)
     def show(self):
         return api.Response(str(self.context.entity))
 
@@ -61,13 +44,13 @@ class BarResource(api.Resource):
 
 
 @api.RestController.register('bar', context=BarResource)
-class BarController(FooController):
+class BarController(api.RestController):
 
+    # a custom route
     @view_config(name='baz')
     def baz(self):
         return api.Response('baz.index')
 
-    @view_config(name='')
     def index(self):
         return api.Response('bar.index')
 
@@ -78,19 +61,19 @@ class QuxResource(api.Resource):
 
 
 @api.RestController.register('qux', context=QuxResource)
-class QuxController(FooController):
+class QuxController(api.RestController):
 
-    @view_config(name='')
     def index(self):
         return api.Response('qux.index')
 
 
 @FooResource.nest('sub')
-class SubResource(api.DBModelBackedResource):
+class SubResource(api.ModelBackedResource):
 
     model_cls = SubModel
 
     def lookup(self, key):
+        # in the real world this would be `self.model_cls.query.get(key).one()`
         if key == 'sub_id':
             return self.model_cls()
 
@@ -98,11 +81,9 @@ class SubResource(api.DBModelBackedResource):
 @api.RestController.register('sub', context=SubResource)
 class SubController(FooController):
 
-    @view_config(name='')
     def index(self):
         return api.Response('sub.index')
 
-    @view_config(resource=SubResource.model_cls)
     def show(self):
         return api.Response(
             '{}{}'.format(

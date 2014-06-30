@@ -55,17 +55,23 @@ class Resource(object):
         )
 
 
-class DBModelBackedResource(Resource):
+class ModelBackedResource(Resource):
     model_cls = None
 
     def lookup(self, key):
-        return self.model_cls.query.get(key).one()
+        raise NotImplementedError()
 
     def __getitem__(self, key):
         model = self.lookup(key)
         if not model:
-            return super(DBModelBackedResource, self).__getitem__(key)
+            return super(ModelBackedResource, self).__getitem__(key)
         return self._create_context_instance(type(self), key, entity=model)
+
+
+class DBModelBackedResource(ModelBackedResource):
+
+    def lookup(self, key):
+        return self.model_cls.query.get(key).one()
 
 
 def includeme(config):
