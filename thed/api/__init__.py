@@ -46,7 +46,7 @@ class Application(object):
         config = cls.configurator_cls()(
             settings=app_settings,
             request_factory=cls.request_cls(),
-            authentication_policy=cls.authorization_policy(),
+            authentication_policy=cls.authentication_policy(),
             authorization_policy=cls.authorization_policy(),
         )
 
