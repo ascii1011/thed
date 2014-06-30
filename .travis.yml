@@ -13,3 +13,5 @@ script:
 - blumpkin coverage coverage.xml thed:90
 after_success:
 - find thed -name "*.py" | xargs pep8 --ignore=E711 | tee pep8.out
+- PYPI_INDEX= PYPI_SERVER= blumpkin create-pypi
+- PYPI_INDEX= PYPI_SERVER= blumpkin publish --on-tag

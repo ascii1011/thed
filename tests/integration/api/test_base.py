@@ -17,6 +17,7 @@ class APITestCase(IntegrationTestCase):
             ('/foo/resource_id', '<TestModel>'),
             ('/foo/resource_id/sub', 'sub.index'),
             ('/foo/resource_id/sub/sub_id', '<SubModel><TestModel>'),
+            # ('/foo/resource_id/sub/sub_id/bar/baz', 'baz.index'),
         ):
             resp = self.app.get(url)
             self.assertEqual(resp.text, expected)
