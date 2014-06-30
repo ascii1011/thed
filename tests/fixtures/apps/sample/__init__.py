@@ -37,6 +37,15 @@ class FooController(api.RestController):
     def show(self):
         return api.Response(str(self.context.entity))
 
+    def create(self):
+        return api.Response('foo.created')
+
+    def update(self):
+        return api.Response('foo.updated')
+
+    def delete(self):
+        return api.Response('foo.deleted')
+
 
 @FooResource.nest('bar')
 class BarResource(api.Resource):

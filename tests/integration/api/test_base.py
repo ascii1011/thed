@@ -20,3 +20,12 @@ class APITestCase(IntegrationTestCase):
         ):
             resp = self.app.get(url)
             self.assertEqual(resp.text, expected)
+
+    def test_other_operations(self):
+        for url, expected, op in (
+            ('/foo', 'foo.created', self.app.post),
+            ('/foo/resource_id', 'foo.updated', self.app.put),
+            ('/foo/resource_id', 'foo.deleted', self.app.delete),
+        ):
+            resp = op(url)
+            self.assertEqual(resp.text, expected)
