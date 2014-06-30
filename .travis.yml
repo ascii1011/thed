@@ -13,5 +13,11 @@ script:
 - blumpkin coverage coverage.xml thed.api:90
 after_success:
 - find thed -name "*.py" | xargs pep8 --ignore=E711 | tee pep8.out
-- PYPI_INDEX= PYPI_SERVER= blumpkin create-pypi
-- PYPI_INDEX= PYPI_SERVER= blumpkin publish --on-tag
+- blumpkin create-pypi
+- blumpkin publish --on-tag
+env:
+  global:
+  - PYPI_INDEX=""
+  - PYPI_SERVER=""
+  - PYPI_USERNAME=balanced-butler
+  - secure: dkXPg5IeShMvbv78eiwtHWcBTcLuuvelFte2tsbJ/YbtbcW4xCc+r1AvVP/dVjEt0xLIMfYCKuSG6gTuvFljWU+mQBuwPrDTQrfpYde/FbkwFxkLhMJrhIdEoE8pSq22cAcUpSUNmHleT6oCYtR5O1ZBcv9DApHJu71cr7ra8t4=
