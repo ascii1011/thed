@@ -5,7 +5,10 @@ from tests.integration import IntegrationTestCase
 
 class APITestCase(IntegrationTestCase):
 
-    def test_it(self):
+    def test_nested_gets(self):
+        """
+        Tests various levels of nesting and resource lookup
+        """
         for url, expected in (
             ('/foo', 'foo.index'),
             ('/foo/bar', 'bar.index'),
