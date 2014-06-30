@@ -80,3 +80,7 @@ class RestController(Controller):
                 if resource and issubclass(context, ModelBackedResource):
                     view_kwargs['resource'] = context.model_cls
                 config.add_view(**view_kwargs)
+
+
+def includeme(config):
+    RestController.scan(config)
