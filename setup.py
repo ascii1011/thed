@@ -11,7 +11,10 @@ version = (
     .group(1)
 )
 
-packages = setuptools.find_packages('.', exclude=('tests', 'tests.*'))
+packages = [
+    str(s) for s in
+    setuptools.find_packages('.', exclude=('tests', 'tests.*'))
+]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
