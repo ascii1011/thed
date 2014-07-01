@@ -6,7 +6,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 
 from .auth import AuthenticationPolicy
 from .controllers import Controller, RestController
-import predicates, requests, resources, responses
+import decorators, predicates, requests, resources, responses
 from .requests import Request
 from .resources import Resource, DBModelBackedResource, ModelBackedResource
 from .responses import Response

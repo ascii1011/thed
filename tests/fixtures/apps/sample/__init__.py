@@ -66,7 +66,7 @@ class BarResource(api.Resource):
 class BarController(api.RestController):
 
     # a custom route
-    @view_config(name='baz')
+    @api.decorators.view_config(name='baz')
     def baz(self):
         return api.Response('baz.index')
 

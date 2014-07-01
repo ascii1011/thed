@@ -45,38 +45,59 @@ class RestController(Controller):
 
         methods = inspect.getmembers(cls, predicate=inspect.ismethod)
         views = [
-            method_name
-            for method_name, _ in methods
+            (method_name, impl)
+            for method_name, impl in methods
             if not method_name.startswith('_')
             and method_name not in to_exclude
         ]
 
-        for method_name in views:
-            if method_name not in operation_map:
+        for method_name, impl in views:
+            if (not hasattr(impl, 'view_config')
+                    and method_name not in operation_map):
                 continue
-            verbs, for_resource = operation_map[method_name]
+            verbs, for_resource = operation_map.get(
+                method_name, (('GET', ), True)
+            )
             if not isinstance(verbs, (tuple, list)):
                 verbs = (verbs,)
 
-            yield method_name, verbs, for_resource
+            yield method_name, impl, verbs, for_resource
+
+    @classmethod
+    def requires_resource(cls, resource, context):
+        return resource and issubclass(context, ModelBackedResource)
+
+    @classmethod
+    def configure(cls, config):
+        cls_settings = getattr(cls, 'view_config', {})
+        for method_name, impl, verbs, resource in cls.operations():
+            # view_kwargs come from
+            # 1. cls_settings (@view_config decorator on class)
+            # 2. __view_defaults__ (@view_defaults decorator on class)
+            # 3. impl.view_config (@view_config decorator on method)
+            view_kwargs = cls_settings.copy()
+            view_kwargs.update(cls.__view_defaults__)
+            # set verbs from operation map, allow them to be updated from
+            # view_config on the method since that will override the class
+            # defaults
+            view_kwargs['request_method'] = verbs
+            meth_settings = getattr(impl, 'view_config', {})
+            view_kwargs.update(meth_settings)
+            view_kwargs.update(dict(
+                view=cls,
+                attr=method_name,
+            ))
+            context = view_kwargs.get('context', None)
+            # a resource specific view with a model associated to it will
+            # use a resource predicate to lookup the object.
+            if cls.requires_resource(resource, context):
+                view_kwargs['resource'] = context.model_cls
+            config.add_view(**view_kwargs)
 
     @classmethod
     def scan(cls, config):
         for resource, controller in cls.registry.iteritems():
-            for method_name, verbs, resource in controller.operations():
-                view_kwargs = dict(
-                    view=controller,
-                    request_method=verbs,
-                    attr=method_name,
-                )
-                defaults = controller.__view_defaults__
-                context = defaults['context']
-                view_kwargs.update(defaults)
-                # a resource specific view with a model associated to it will
-                # use a resource predicate to lookup the object.
-                if resource and issubclass(context, ModelBackedResource):
-                    view_kwargs['resource'] = context.model_cls
-                config.add_view(**view_kwargs)
+            controller.configure(config)
 
 
 def includeme(config):

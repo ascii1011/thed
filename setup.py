@@ -4,6 +4,7 @@ import os
 import re
 import setuptools
 
+
 version = (
     re
     .compile(r".*__version__ = '(.*?)'", re.S)
@@ -27,15 +28,13 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 requires = [
     'pyramid==1.5.1',
     'SQLAlchemy==0.9.6',
-    'click==2.2',
+    'click>=2.0.0,<3.0.0',
     'pilo>=0.3.2,<0.4'
 ]
 
 extras_require = {
     'tests': [
-        'nose>=1.3,<1.4',
-        'mock>=1.0,<1.1',
-        'ipdb',
+        'blumpkin>=0.4.0,<0.5.0',
         'pyflakes',
         'webtest',
         'WSGIProxy2',
@@ -68,5 +67,5 @@ setuptools.setup(
     entry_points="""\
         [pyramid.scaffold]
         api=thed.scaffolds:APITemplate
-      """
+      """,
 )
