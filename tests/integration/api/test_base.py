@@ -17,7 +17,6 @@ class APITestCase(IntegrationTestCase):
             ('/foo/resource_id', '<TestModel>'),
             ('/foo/resource_id/sub', 'sub.index'),
             ('/foo/resource_id/sub/sub_id', '<SubModel><TestModel>'),
-            # ('/foo/resource_id/sub/sub_id/bar/baz', 'baz.index'),
         ):
             resp = self.app.get(url)
             self.assertEqual(resp.text, expected)
@@ -27,6 +26,9 @@ class APITestCase(IntegrationTestCase):
             ('/foo', 'foo.created', self.app.post),
             ('/foo/resource_id', 'foo.updated', self.app.put),
             ('/foo/resource_id', 'foo.deleted', self.app.delete),
+            ('/foo', 'foo.options', self.app.options),
+            ('/foo/resource_id', 'foo.options', self.app.options),
+            ('/foo/upserted', 'foo.upsert', self.app.put),
         ):
             resp = op(url)
             self.assertEqual(resp.text, expected)

@@ -26,6 +26,10 @@ class FooResource(api.ModelBackedResource):
         # in the real world this would be `self.model_cls.query.get(key).one()`
         if key == 'resource_id':
             return self.model_cls()
+        # upserts. hmmmm. if put and resource not found above then this will
+        # work.
+        if self.request.method == 'PUT':
+            return self.model_cls
 
 
 @api.RestController.register('foo', context=FooResource)
@@ -45,6 +49,12 @@ class FooController(api.RestController):
 
     def delete(self):
         return api.Response('foo.deleted')
+
+    def upsert(self):
+        return api.Response('foo.upsert')
+
+    def options(self):
+        return api.Response('foo.options')
 
 
 @FooResource.nest('bar')

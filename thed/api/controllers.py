@@ -39,7 +39,8 @@ class RestController(Controller):
             'show': ('GET', True),
             'update': (('PUT', 'PATCH'), True),
             'delete': ('DELETE', True),
-            'upsert': ('PUT', True),
+            'upsert': ('PUT', False),
+            'options': ('OPTIONS', False),
         }
 
         methods = inspect.getmembers(cls, predicate=inspect.ismethod)
